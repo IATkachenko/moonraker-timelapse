@@ -409,9 +409,6 @@ class Timelapse:
 
     def spawn_newframe_callbacks(self) -> None:
         ioloop = IOLoop.current()
-        # release parked head after park time is passed
-        park_time = self.config['park_time']
-        ioloop.call_later(delay=park_time, callback=self.release_parkedhead)
         # capture the frame after stream delay is passed
         stream_delay = self.config['stream_delay_compensation']
         ioloop.call_later(delay=stream_delay, callback=self.newframe)
@@ -496,6 +493,7 @@ class Timelapse:
 
         self.notify_event(result)
         self.takingframe = False
+        IOLoop.current().spawn_callback(self.release_parkedhead)
 
     async def handle_status_update(self, status: Dict[str, Any]) -> None:
         if 'print_stats' in status:
