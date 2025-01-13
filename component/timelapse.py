@@ -71,6 +71,7 @@ class Timelapse:
             'mode': "layermacro",
             'camera': "",
             'snapshoturl': "http://localhost:8080/?action=snapshot",
+            'frame_timeout': 2,
             'stream_delay_compensation': 0.05,
             'gcode_verbose': False,
             'parkhead': False,
@@ -475,7 +476,7 @@ class Timelapse:
         shell_cmd: SCMDComp = self.server.lookup_component('shell_command')
         scmd = shell_cmd.build_shell_command(cmd, None)
         try:
-            cmdstatus = await scmd.run(timeout=2., verbose=False)
+            cmdstatus = await scmd.run(timeout=self.config['frame_timeout'], verbose=False)
         except Exception:
             logging.exception(f"Error running cmd '{cmd}'")
 
